@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4
+    ports:
+      - 3333:3306
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: password
+
+
+  webpacker:
+    build: .
+    command: bundle exec bin/webpack-dev-server
+    volumes:
+      - .:/rails_smpl
+    ports:
+      - "8080:8080"
+
+  web:
+    build: .
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/rails_smpl
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - webpacker
